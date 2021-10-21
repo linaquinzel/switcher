@@ -6,6 +6,9 @@ def find_contours_of_switchers(image_path):
     """ Находим контуры. """
     # получаем и читаем картинку
     image = cv2.imread(image_path)
+    image3 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('contours', image3)
+    cv2.waitKey(0)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower = np.array([0, 153, 1543], dtype="uint8")
     upper = np.array([204, 255, 255], dtype="uint8")
@@ -16,7 +19,7 @@ def find_contours_of_switchers(image_path):
     # преобразуем картинку в чб, всем значениям >127 присваиваем 255, остальным-0
     # threshold возвращает два значения - второй переданный в функцию аргумент и картинку
     T, thresh_img = cv2.threshold(blurred, 200, 255, cv2.THRESH_BINARY)
-    print(thresh_img)
+    cv2.imshow("ghj", thresh_img)
     # находим контуры интересных точек
     contours, hierarchy = cv2.findContours(thresh_img, cv2.RETR_EXTERNAL , cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(image, contours, -1, (255,0,0), 3, cv2.LINE_AA, hierarchy, 1)
@@ -36,13 +39,17 @@ def find_coordinates_of_switchers(contours, image2):
             img_crop = image2[y - 15:y + h + 15, x - 15:x + w + 15]
             cards_name = cv2.find_features(img_crop)
             switchers_coordinates[cards_name] = (x - 15, y - 15, x + w + 15, y + h + 15)
+    cv2.drawContours(image2, switchers_coordinates, -1, (255,0,0), 3, cv2.LINE_AA, 1)
+    cv2.imshow("result", switchers_coordinates)
+    cv2.waitKey(0)
+
     return switchers_coordinates
 
 def find_features(image2):
     correct_matches_dct = {}
-    directory = 'switch_recognizer/images'
+    directory = 'images/'
     for image in os.listdir(directory):
-        img2 = cv2.imread(directory+image, 0)
+        img2 = cv2.imread(directory+image)
         orb = cv2.ORB_create()
         kp1, des1 = orb.detectAndCompute(image2, None)
         kp2, des2 = orb.detectAndCompute(img2, None)
@@ -56,14 +63,10 @@ def find_features(image2):
     correct_matches_dct = dict(sorted(correct_matches_dct.items(), key=lambda item: item[1], reverse=True))
     return list(correct_matches_dct.keys())[0]
 
-def draw_rectangle_aroud_cards(cards_coordinates, image):
-    for key, value in cards_coordinates.items():
-        rec = cv2.rectangle(image, (value[0], value[1]), 
-                            (value[2], value[3]), 
-                            (255, 255, 0), 2)
-        cv2.putText(rec, key, (value[0], value[1] - 10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 
-                    0.5, (36, 255, 12), 1)
+def draw_rectangle_aroud_cards(switchers_coordinates, image):
+    for key, value in switchers_coordinates.items():
+        rec = cv2.rectangle(image, (value[0], value[1]), (value[2], value[3]), (255, 255, 0), 2)
+        cv2.putText(rec, key, (value[0], value[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 1)
     cv2.imshow('Image', image)
     cv2.waitKey(0)
 find_contours_of_switchers("images/box.jpg")
