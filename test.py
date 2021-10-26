@@ -38,7 +38,7 @@ def find_coordinates_of_switchers(contours, image):
 
 def find_features(image_one):
     correct_matches_dct = {}
-    directory = "correct_images/"
+    directory = "images1/"
     for image in os.listdir(directory):
         contours, img2 = find_contours_of_switchers(directory+image)
         orb = cv2.ORB_create()
