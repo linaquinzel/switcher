@@ -4,8 +4,8 @@ import os
 
 def preview(image_path):
     # получаем и читаем картинку
-    image_ = cv2.imread(image_path)
-    image = cv2.cvtColor(image_, cv2.COLOR_BGR2HSV)
+    preimage = cv2.imread(image_path)
+    image = cv2.cvtColor(preimage, cv2.COLOR_BGR2HSV)
     lower = np.array([0, 150, 150], dtype="uint8")
     upper = np.array([204, 255, 255], dtype="uint8")
     mask = cv2.inRange(image, lower, upper)
@@ -31,7 +31,7 @@ def find_coordinates_of_switchers(contours, image):
     # словарь вида {выключатель: значение}
     switchers_coordinates = {}
     # для элементов списка в диапазоне от 1 до количества найденных контуров
-    for i in range(len(contours)):
+    for i in range(0, len(contours)):
         # (x,y) - координаты начала прямоугольника, обводящего контуры
         # (w, h) - ширина и высота этого прямоугольника
         x, y, w, h = cv2.boundingRect(contours[i])
@@ -57,12 +57,11 @@ def find_features(image_one):
         # cv2.waitKey(0)
         correct_matches_dct[image.split('.')[0]] = len(correct_matches)
     correct_matches_dict = dict(sorted(correct_matches_dct.items(), key=lambda item: item[1], reverse=True))
-    print(list(correct_matches_dict.keys())[0])
 
     return list(correct_matches_dict.keys())[0]
 
 def draw_rectangle_aroud_switchers(switchers_coordinates):
-    image_ = cv2.imread("box5.jpg")
+    image_ = cv2.imread("box3.jpg")
     for key, value in switchers_coordinates.items():
         rec = cv2.rectangle(image_, (value[0], value[1]), (value[2], value[3]), (255, 255, 0), 2)
         cv2.putText(rec, key, (value[0], value[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 1)
@@ -70,7 +69,7 @@ def draw_rectangle_aroud_switchers(switchers_coordinates):
     cv2.waitKey(0)
 
 
-image = preview("box5.jpg")
+image = preview("box3.jpg")
 contours = find_contours_of_switchers(image)
 switchers_coordinates = find_coordinates_of_switchers(contours, image)
 draw_rectangle_aroud_switchers(switchers_coordinates)
