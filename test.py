@@ -6,7 +6,6 @@ def find_contours_of_switchers(image_path):
     """ Находим контуры. """
     # получаем и читаем картинку
     image_ = cv2.imread(image_path)
-    print(type(image_))
     image = cv2.cvtColor(image_, cv2.COLOR_BGR2HSV)
     lower = np.array([0, 153, 153], dtype="uint8")
     upper = np.array([204, 255, 255], dtype="uint8")

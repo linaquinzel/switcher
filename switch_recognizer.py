@@ -2,9 +2,14 @@ import cv2
 import numpy as np
 import os
 
+
+DIRECTORY = "images/"
+
 def preview(image_path):
     # получаем и читаем картинку
     preimage = cv2.imread(image_path)
+    cv2.imshow('matches', preimage)
+    cv2.waitKey(0)
     image = cv2.cvtColor(preimage, cv2.COLOR_BGR2HSV)
     lower = np.array([0, 150, 150], dtype="uint8")
     upper = np.array([204, 255, 255], dtype="uint8")
@@ -44,9 +49,9 @@ def find_coordinates_of_switchers(contours, image):
 
 def find_features(image_one):
     correct_matches_dct = {}
-    directory = "correct_images/"
-    for image in os.listdir(directory):
-        img2 = preview(directory+image)
+    for image in os.listdir(DIRECTORY):
+        path = DIRECTORY+image
+        img2 = preview(path)
         orb = cv2.ORB_create()
         kp1, des1 = orb.detectAndCompute(img2, None)
         kp2, des2 = orb.detectAndCompute(image_one, None)
@@ -61,7 +66,7 @@ def find_features(image_one):
     return list(correct_matches_dict.keys())[0]
 
 def draw_rectangle_aroud_switchers(switchers_coordinates):
-    image_ = cv2.imread("box3.jpg")
+    image_ = cv2.imread("box5.jpg")
     for key, value in switchers_coordinates.items():
         rec = cv2.rectangle(image_, (value[0], value[1]), (value[2], value[3]), (255, 255, 0), 2)
         cv2.putText(rec, key, (value[0], value[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 1)
@@ -69,7 +74,7 @@ def draw_rectangle_aroud_switchers(switchers_coordinates):
     cv2.waitKey(0)
 
 
-image = preview("box3.jpg")
+image = preview("box5.jpg")
 contours = find_contours_of_switchers(image)
 switchers_coordinates = find_coordinates_of_switchers(contours, image)
 draw_rectangle_aroud_switchers(switchers_coordinates)
