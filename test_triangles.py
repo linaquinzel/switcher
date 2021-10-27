@@ -53,12 +53,19 @@ for cnt in contours:
     cx = int(moment['m10'] / moment['m00'])
     cy = int(moment['m01'] / moment['m00'])
     shape = detectShape(cnt)
-    for cn in range(0, len(contours)):
+    print(list2)
+    
+    cv2.drawContours(img, [cnt], -1, (0, 255, 0), 2)
+    cv2.putText(img, shape, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0,0),2)  #Putting name of polygon along with the shape 
+    cv2.imshow('polygons_detected', img)
+    
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+for cn in range(0, len(contours)):
         x, y, w, h = cv2.boundingRect(contours[cn])
         if 10 < w and 10 < h:
-            for o in range(0, len(list2)):
-                u = (x, y, list2[o])
-                list1.append(u)
+            u = (x, y, list2[cn])
+            list1.append(u)
             for i in range(len(list1)-1):
                 for j in range((len(list1)-1)-i):
                     if list1[j][1] > list1[j+1][1]:
@@ -66,10 +73,4 @@ for cnt in contours:
                     elif list1[j][1] == list1[j+1][1]:
                         if list1[j][0] > list1[j+1][0]:
                             list1[j], list1[j+1] = list1[j+1], list1[j]
-    for ki in list1:
-        print()
-    cv2.drawContours(img, [cnt], -1, (0, 255, 0), 2)
-    cv2.putText(img, shape, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0,0),2)  #Putting name of polygon along with the shape 
-    cv2.imshow('polygons_detected', img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+print(list1)
