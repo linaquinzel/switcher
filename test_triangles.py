@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-img = cv2.imread('test_square.jpg')  # read image from system
-list1 =[]
+img = cv2.imread('triangles_and_squares.jpg')  # read image from system
+list1 = []
+list2 = []
 lower = np.array([76, 0, 153], dtype="uint8")
 upper = np.array([255, 204, 255], dtype="uint8")
 mask = cv2.inRange(img, lower, upper)
@@ -23,6 +24,7 @@ def detectShape(c):  # Function to determine type of polygon on basis of number 
     sides = len(vertices)
     if (sides == 3):
         shape = 'on'
+        list2.append(1)
     elif(sides == 4):
         x, y, w, h = cv2.boundingRect(cnt)
         aspectratio = float(w)/h
@@ -30,6 +32,7 @@ def detectShape(c):  # Function to determine type of polygon on basis of number 
             shape = 'square'
         else:
             shape = "off"
+            list2.append(0)
     elif(sides == 5):
         shape = 'pentagon'
     elif(sides == 6):
@@ -42,25 +45,29 @@ def detectShape(c):  # Function to determine type of polygon on basis of number 
         shape = 'circle'
     return shape
 
-for cnt in range(0, len(contours)):
-        x, y, w, h = cv2.boundingRect(contours[cnt])
-        if 10 < w and 10 < h:
-            u = (x, y)
-            list1.append(u)
-        for i in range(len(list1)-1):
-            for j in range((len(list1)-1)-i):
-                if list1[j][1] > list1[j+1][1]:
-                    list1[j], list1[j+1] = list1[j+1], list1[j]
-                elif list1[j][1] == list1[j+1][1]:
-                    if list1[j][0] > list1[j+1][0]:
-                        list1[j], list1[j+1] = list1[j+1], list1[j]
-print(list1)
+
+
 
 for cnt in contours:
     moment = cv2.moments(cnt)
     cx = int(moment['m10'] / moment['m00'])
     cy = int(moment['m01'] / moment['m00'])
     shape = detectShape(cnt)
+    for cn in range(0, len(contours)):
+        x, y, w, h = cv2.boundingRect(contours[cn])
+        if 10 < w and 10 < h:
+            for o in range(0, len(list2)):
+                u = (x, y, list2[o])
+                list1.append(u)
+            for i in range(len(list1)-1):
+                for j in range((len(list1)-1)-i):
+                    if list1[j][1] > list1[j+1][1]:
+                        list1[j], list1[j+1] = list1[j+1], list1[j]
+                    elif list1[j][1] == list1[j+1][1]:
+                        if list1[j][0] > list1[j+1][0]:
+                            list1[j], list1[j+1] = list1[j+1], list1[j]
+    for ki in list1:
+        print()
     cv2.drawContours(img, [cnt], -1, (0, 255, 0), 2)
     cv2.putText(img, shape, (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0,0),2)  #Putting name of polygon along with the shape 
     cv2.imshow('polygons_detected', img)
