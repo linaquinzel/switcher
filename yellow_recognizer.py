@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-DIRECTORY = "correct_images/"
+DIRECTORY = "angle/"
 
 def preview_yellow(image_path):
     # получаем и читаем картинку
@@ -121,7 +121,7 @@ def find_coordinates_of_switchers_white(contours, image):
     return switchers_coordinates
 
 def draw_rectangle_aroud_switchers(switchers_coordinates_yellow, switchers_coordinates_white):
-    image_ = cv2.imread("box7.jpg")
+    image_ = cv2.imread("on.jpg")
     for key, value in switchers_coordinates_yellow.items():
         rec = cv2.rectangle(image_, (value[0], value[1]), (value[2], value[3]), (255, 255, 0), 2)
         cv2.putText(rec, key, (value[0], value[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 1)
@@ -134,7 +134,7 @@ def draw_rectangle_aroud_switchers(switchers_coordinates_yellow, switchers_coord
 
 
 
-image_yellow = preview_yellow("box7.jpg")
+image_yellow = preview_yellow(".jpg")
 image_white = preview_yellow("box7.jpg")
 contours_yellow = find_contours_of_switchers(image_yellow)
 contours_white = find_contours_of_switchers(image_white)
