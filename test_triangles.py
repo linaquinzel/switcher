@@ -1,13 +1,16 @@
 import cv2
 import numpy as np
-img = cv2.imread('test_images/test22.jpg')  # read image from system
+
+print(cv2.__version__)
+img = cv2.imread('test_images/test42.jpg')  # read image from system
 list1 = []
 list2 = []
-lower = np.array([0, 0, 150], dtype="uint8")
-upper = np.array([102, 102, 255], dtype="uint8")
-mask = cv2.inRange(img, lower, upper)
+lower = np.array([30, 1, 1], dtype="uint8")
+upper = np.array([100, 50, 60], dtype="uint8")
+rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+mask = cv2.inRange(rgb, lower, upper)
     # блюрим изображение (картинка, (размер ядра(матрицы), стандартное отклонение ядра))
-blurred = cv2.GaussianBlur(mask, (3, 3), 0)
+blurred = cv2.GaussianBlur(mask, (1, 1), 0)
     # преобразуем картинку в чб, всем значениям >127 присваиваем 255, остальным-0
     # threshold возвращает два значения - второй переданный в функцию аргумент и картинку
 T, returned_image = cv2.threshold(blurred, 200, 255, cv2.THRESH_BINARY)

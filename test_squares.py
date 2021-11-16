@@ -3,8 +3,8 @@ import numpy as np
 import cv2 as cv
 
 
-hsv_min = np.array([76, 0, 153], dtype="uint8")
-hsv_max = np.array([255, 204, 255], dtype="uint8")
+hsv_min = np.array([160, 160, 40], dtype="uint8")
+hsv_max = np.array([180, 180, 60], dtype="uint8")
 list1 = []
 # hsv_min = np.array((194, 170, 251), np.uint8)
 # hsv_max = np.array((200, 172, 255), np.uint8)
