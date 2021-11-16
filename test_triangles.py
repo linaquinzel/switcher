@@ -1,8 +1,17 @@
 import cv2
 import numpy as np
 
-print(cv2.__version__)
-img = cv2.imread('test_images/test42.jpg')  # read image from system
+frame_number = 0
+
+video_capture = cv2.VideoCapture(0)
+while True:
+    ret, frame = video_capture.read()
+    frame_number += 1
+    if not ret:
+        break 
+img = frame[:, :, ::-1]
+	
+# img = cv2.imread('test_images/test42.jpg')  # read image from system
 list1 = []
 list2 = []
 lower = np.array([30, 1, 1], dtype="uint8")
