@@ -4,6 +4,11 @@ import numpy as np
 list2 = []
 list3 = []
 
+lower = np.array([30, 1, 1], dtype="uint8")
+upper = np.array([100, 50, 60], dtype="uint8")
+lower_green = np.array([10, 100, 10], dtype="uint8")
+upper_green = np.array([30, 254, 30], dtype="uint8")
+
 def detectShape(cnt):  # Function to determine type of polygon on basis of number of sides
     shape = 'unknown'
     peri = cv2.arcLength(cnt, True)
@@ -17,16 +22,26 @@ def detectShape(cnt):  # Function to determine type of polygon on basis of numbe
         list2.append(0)
     return shape
 
+def sorter(lists):
+    for i in range(len(lists)-1):
+        for j in range((len(lists)-1)-i):
+            if lists[j][1] > lists[j+1][1]:
+                lists[j], lists[j+1] = lists[j+1], lists[j]
+            elif lists[j][1] == lists[j+1][1]:
+                if lists[j][0] > lists[j+1][0]:
+                    lists[j], lists[j+1] = lists[j+1], lists[j]
+    for kl in lists:
+        list3.append(kl[2])
+    return(list3)
+
 
 video_capture = cv2.VideoCapture(0)
-def switcher_recognizer():
+def switcher_recognizer(lower, upper):
     list1 = []
     ret, frame = video_capture.read()
     if not ret:
         pass
     img = frame[:, :, ::-1]
-    lower = np.array([30, 1, 1], dtype="uint8")
-    upper = np.array([100, 50, 60], dtype="uint8")
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     mask = cv2.inRange(rgb, lower, upper)
     # блюрим изображение (картинка, (размер ядра(матрицы), стандартное отклонение ядра))
@@ -55,19 +70,10 @@ def switcher_recognizer():
         if 1 < w and 1 < h:
             u = (x, y, list2[cn])
             list1.append(u)
-            for i in range(len(list1)-1):
-                for j in range((len(list1)-1)-i):
-                    if list1[j][1] > list1[j+1][1]:
-                        list1[j], list1[j+1] = list1[j+1], list1[j]
-                    elif list1[j][1] == list1[j+1][1]:
-                        if list1[j][0] > list1[j+1][0]:
-                            list1[j], list1[j+1] = list1[j+1], list1[j]
-    
-    for kl in list1:
-        list3.append(kl[2])
-    return(list3)
+    return(list1)
 condition = False
-switchers_list = switcher_recognizer()
+switchers_list = switcher_recognizer(lower, upper)
+switchers_list.append(switcher_recognizer(lower_green, upper_green))
 if len(switchers_list) != 8:
     condition = True
 else:
@@ -78,4 +84,5 @@ while condition == True:
         condition = True
     else:
         condition = False
-        print(list3)
+        list4 = sorter(list3)
+        print(list4)
